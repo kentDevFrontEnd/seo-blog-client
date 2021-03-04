@@ -1,31 +1,35 @@
-import React, { useState } from "react";
 import Link from "next/link";
-
+import Router from "next/router";
+import React, { useEffect, useState } from "react";
 import {
   Collapse,
+  Container,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle,
+  Nav,
   Navbar,
   NavbarToggler,
-  NavbarBrand,
-  Nav,
   NavItem,
   NavLink,
   UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  NavbarText,
-  Container,
 } from "reactstrap";
-
-import Router from "next/router";
-
+import { isAuth, signout } from "../actions/auth.action";
 import { APP_NAME } from "../config";
-import { signout, isAuth } from "../actions/auth.action";
 
 const Header = (props) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isAuthLocal, setIsAuthLocal] = useState(false);
 
   const toggle = () => setIsOpen(!isOpen);
+
+  useEffect(() => {
+    if (isAuth()) {
+      setIsAuthLocal(true);
+    } else {
+      setIsAuthLocal(false);
+    }
+  }, [isAuth]);
 
   const handleSignout = () => {
     signout(() => {
@@ -33,14 +37,17 @@ const Header = (props) => {
     });
   };
 
+  console.log("isAuth", isAuth());
+
   return (
-    <div>
+    <>
       <Navbar color="dark" dark expand="md">
         <Container>
           <Link href="/">
             <a className="navbar-brand">{APP_NAME}</a>
           </Link>
           <NavbarToggler onClick={toggle} />
+
           <Collapse isOpen={isOpen} navbar>
             <Nav className="ml-auto" navbar>
               {/* BUG when change ui of header */}
@@ -48,7 +55,7 @@ const Header = (props) => {
                 <NavLink href="/blogs">Blogs</NavLink>
               </NavItem>
 
-              {isAuth() ? (
+              {isAuthLocal && (
                 <React.Fragment>
                   <NavItem>
                     <a
@@ -95,7 +102,8 @@ const Header = (props) => {
                     </DropdownMenu>
                   </UncontrolledDropdown>
                 </React.Fragment>
-              ) : (
+              )}
+              {!isAuthLocal && (
                 <React.Fragment>
                   <NavItem>
                     <Link href="/signin">
@@ -113,12 +121,13 @@ const Header = (props) => {
           </Collapse>
         </Container>
       </Navbar>
+
       <style jsx>{`
         .cursor {
           cursor: "pointer";
         }
       `}</style>
-    </div>
+    </>
   );
 };
 

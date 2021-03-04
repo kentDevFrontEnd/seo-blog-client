@@ -16,6 +16,7 @@ export const signup = async (user) => {
     return await res.json();
   } catch (error) {
     console.log(error);
+    return error.response.data;
   }
 };
 
@@ -32,6 +33,7 @@ export const signin = async (user) => {
     return await res.json();
   } catch (error) {
     console.log(error);
+    return error.response.data;
   }
 };
 

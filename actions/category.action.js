@@ -16,6 +16,7 @@ export const createCategory = async (category, token) => {
     return await res.json();
   } catch (error) {
     console.log(error);
+    return error.response.data;
   }
 };
 
@@ -31,6 +32,7 @@ export const getAllCategories = async () => {
     return await res.json();
   } catch (error) {
     console.log(error);
+    return error.response.data;
   }
 };
 
@@ -47,6 +49,7 @@ export const getOneCategory = async (slug, token) => {
     return await res.json();
   } catch (error) {
     console.log(error);
+    return error.response.data;
   }
 };
 export const updateCategory = async (slug, category, token) => {
@@ -63,6 +66,7 @@ export const updateCategory = async (slug, category, token) => {
     return await res.json();
   } catch (error) {
     console.log(error);
+    return error.response.data;
   }
 };
 
@@ -79,5 +83,6 @@ export const deleteOneCategory = async (slug, token) => {
     return await res.json();
   } catch (error) {
     console.log(error);
+    return error.response.data;
   }
 };

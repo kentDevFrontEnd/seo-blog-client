@@ -16,6 +16,7 @@ export const createTag = async (tag, token) => {
     return await res.json();
   } catch (error) {
     console.log(error);
+    return error.response.data;
   }
 };
 
@@ -31,6 +32,7 @@ export const getAllTags = async () => {
     return await res.json();
   } catch (error) {
     console.log(error);
+    return error.response.data;
   }
 };
 
@@ -47,6 +49,7 @@ export const getOneTag = async (slug, token) => {
     return await res.json();
   } catch (error) {
     console.log(error);
+    return error.response.data;
   }
 };
 export const updateTag = async (slug, tag, token) => {
@@ -63,6 +66,7 @@ export const updateTag = async (slug, tag, token) => {
     return await res.json();
   } catch (error) {
     console.log(error);
+    return error.response.data;
   }
 };
 
@@ -79,5 +83,6 @@ export const deleteOneTag = async (slug, token) => {
     return await res.json();
   } catch (error) {
     console.log(error);
+    return error.response.data;
   }
 };

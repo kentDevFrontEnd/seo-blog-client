@@ -6,7 +6,7 @@ import { authenticate, isAuth, signin } from "../../actions/auth.action";
 
 const SigninComponent = () => {
   const [values, setValues] = useState({
-    email: "abc@abc.com",
+    email: "admin1@admin.com",
     password: "123456",
     error: null,
     loading: false,

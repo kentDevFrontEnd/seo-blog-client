@@ -4,11 +4,12 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Layout from "../../components/Layout";
 import { Button, Col, Container, Row } from "reactstrap";
-import { getAllBlogs } from "../../actions/blog.action";
+import { getAllBlogs, getBlogsWithSearchTerm } from "../../actions/blog.action";
 import { getInitialData } from "../../actions/initial.action";
 import Head from "next/head";
 import { API, APP_NAME, DOMAIN_NAME, FB_APP_ID } from "../../config";
 import { withRouter } from "next/router";
+import Search from "../../components/blog/Search";
 
 dayjs.extend(relativeTime);
 
@@ -19,20 +20,44 @@ function Blogs({ data, router }) {
   const [loading, setLoading] = useState(false);
   const [loadedBlogs, setLoadedBlogs] = useState([]);
   const [error, setError] = useState("");
+  const [searchedBlogs, setSearchBlogs] = useState([]);
+  const [isSearch, setIsSearch] = useState(false);
 
   const loadMore = () => {
     setLoading(true);
-    console.log("page before", page);
     getAllBlogs(page, 2).then((data) => {
+      console.log(data);
       if (data.error) {
         setError(data.error);
         setLoading(false);
       } else {
         setLoadedBlogs([...loadedBlogs, data.blogs]);
         setLoading(false);
+        setError("");
         setPage(page + 1);
       }
     });
+  };
+
+  const handleSearch = (term) => {
+    if (term.q) {
+      setIsSearch(true);
+      getBlogsWithSearchTerm(term).then((data) => {
+        if (data.error) {
+          setError(data.error);
+          setLoading(false);
+        } else {
+          setSearchBlogs(data.blogs);
+          setLoading(false);
+          setError("");
+        }
+      });
+    } else {
+      setIsSearch(false);
+      console.log("do not search");
+      setError("");
+      setLoading(false);
+    }
   };
 
   const head = () => {
@@ -73,6 +98,7 @@ function Blogs({ data, router }) {
     );
   };
 
+  console.log(searchedBlogs);
   const createMarkup = (text) => {
     return { __html: text };
   };
@@ -81,7 +107,7 @@ function Blogs({ data, router }) {
     return (
       blogs &&
       blogs.map((blog) => (
-        <article key={blog.id}>
+        <article key={blog._id}>
           <div className="lead">
             <header>
               <Link href={`/blogs/${blog.slug}`}>
@@ -93,8 +119,11 @@ function Blogs({ data, router }) {
 
             <section>
               <p className="mark ml-1 pt-2 pb-2">
-                Writen by {blog.postedBy.name} | Published{" "}
-                {dayjs(blog.updatedAt).fromNow()}
+                Writen by{" "}
+                <Link href={`/user/${blog.postedBy.name}`}>
+                  <a>{blog.postedBy.name}</a>
+                </Link>
+                | Published {dayjs(blog.updatedAt).fromNow()}
               </p>
             </section>
 
@@ -102,7 +131,7 @@ function Blogs({ data, router }) {
               {blog.tag &&
                 blog.tag.map((tag) => (
                   <div key={tag._id} className="d-inline-block m-1">
-                    <Link href={`/blogs/${tag.slug}`}>
+                    <Link href={`/tag/${tag.slug}`}>
                       <a className="fs-6 btn btn-info ">{tag.name}</a>
                     </Link>
                   </div>
@@ -184,25 +213,25 @@ function Blogs({ data, router }) {
     <React.Fragment>
       {head()}
       <Layout>
-        <header>
-          <Container className="mt-3">
-            <Row>
-              <Col>
-                <h1 className="display-5 text-center font-weight-bold">
-                  Program blogs and tutorial
-                </h1>
-              </Col>
-            </Row>
-          </Container>
-        </header>
-        <main>
-          <Container className="mt-3">
+        <Container className="mt-3">
+          <header>
+            <h1 className="display-5 text-center font-weight-bold ">
+              Program blogs and tutorial
+            </h1>
+            <Search handleSearch={handleSearch} />
+          </header>
+          <main className="mt-3">
             {showError()}
             <Row>
-              <Col md={9}>
-                {showAllBlogs(blogs)}
-                {loadedBlogs.map((item, index) => showAllBlogs(item))}
-              </Col>
+              {isSearch ? (
+                <Col md={9}>{showAllBlogs(searchedBlogs)}</Col>
+              ) : (
+                <Col md={9}>
+                  {showAllBlogs(blogs)}
+                  {loadedBlogs.map((item, index) => showAllBlogs(item))}
+                  {/* //FIXME key for each item */}
+                </Col>
+              )}
               <Col md={3}>
                 <h5>Categories: </h5>
                 {showAllCategories()}
@@ -213,8 +242,8 @@ function Blogs({ data, router }) {
             <Row>
               <Col>{loadMoreBtn()}</Col>
             </Row>
-          </Container>
-        </main>
+          </main>
+        </Container>
       </Layout>
     </React.Fragment>
   );

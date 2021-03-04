@@ -8,7 +8,7 @@ const AdminIndex = () => {
   return (
     <Layout>
       <Admin>
-        <Container fluid>
+        <Container className="mt-3">
           <Row>
             <Col sm={12}>
               <h2>Admin Dashboard</h2>
@@ -25,6 +25,12 @@ const AdminIndex = () => {
                 <ListGroupItem>
                   <Link href="/admin/crud/create-blog">
                     <a>Create a Blog</a>
+                  </Link>
+                </ListGroupItem>
+
+                <ListGroupItem>
+                  <Link href="/admin/crud/blogs">
+                    <a>Manager blogs</a>
                   </Link>
                 </ListGroupItem>
               </ListGroup>

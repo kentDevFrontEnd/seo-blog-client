@@ -76,7 +76,12 @@ const SingleBlog = ({ data }) => {
         <Col sm={6} lg={3} key={item._id}>
           <Card className="mb-3">
             {item.photo.length > 0 && (
-              <CardImg top width="100%" src={item.photo[0]} alt={item.title} />
+              <CardImg
+                top
+                width="100%"
+                src={item.photo[0].img}
+                alt={item.title}
+              />
             )}
             <CardBody>
               <CardTitle tag="h5">{item.title}</CardTitle>
@@ -98,7 +103,7 @@ const SingleBlog = ({ data }) => {
         <main>
           <article>
             {blog && (
-              <Container>
+              <Container className="mt-4">
                 <Row>
                   {blog.photo.length > 0 && (
                     <img
@@ -120,8 +125,11 @@ const SingleBlog = ({ data }) => {
 
                 <Row>
                   <p className="lead pt-2 pb-2">
-                    Writen by {blog.postedBy.name} | Published{" "}
-                    {dayjs(blog.updatedAt).fromNow()}
+                    Writen by{" "}
+                    <Link href={`/user/${blog.postedBy.name}`}>
+                      <a>{blog.postedBy.name}</a>
+                    </Link>{" "}
+                    | Published {dayjs(blog.updatedAt).fromNow()}
                   </p>
                 </Row>
 
@@ -137,7 +145,7 @@ const SingleBlog = ({ data }) => {
                 </Row>
 
                 <Row>
-                  <p className="">{blog.mdesc}</p>
+                  <p dangerouslySetInnerHTML={{ __html: blog.content }}></p>
                 </Row>
 
                 <Row>
